@@ -10,11 +10,11 @@ class TemplatesScreen extends StatefulWidget {
 }
 
 class _TemplatesScreenState extends State<TemplatesScreen> {
-  String selectedFilter = 'All';
+  String selectedFilter = 'Tất cả';
 
   @override
   Widget build(BuildContext context) {
-    List<Template> filteredTemplates = selectedFilter == 'All'
+    List<Template> filteredTemplates = selectedFilter == 'Tất cả'
         ? appState.templates
         : appState.templates.where((t) => t.category == selectedFilter).toList();
 
@@ -25,16 +25,16 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Greeting Templates', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('Mẫu lời chúc', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            const Text('Find the perfect words for your loved ones.', style: TextStyle(color: Colors.grey)),
+            const Text('Tìm ra lời chúc phù hợp cho người quan trọng của bạn.', style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 20),
 
             // Bộ lọc (Filter Chips)
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: ['All', 'Formal', 'Funny', 'Heartfelt'].map((filter) {
+                children: ['Tất cả', 'Lịch sự', 'Hài hước', 'Chân thành'].map((filter) {
                   bool isSelected = selectedFilter == filter;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0),
