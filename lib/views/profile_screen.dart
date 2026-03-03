@@ -39,11 +39,11 @@ class ProfileScreen extends StatelessWidget {
                     ListenableBuilder(
                       listenable: appState,
                       builder: (context, child) {
-                        return _buildStatRow('TOTAL GREETED', '${appState.greetedContacts}/${appState.totalContacts}', Colors.red);
+                        return _buildStatRow('TIẾN ĐỘ LỜI CHÚC', '${appState.greetedContacts}/${appState.totalContacts}', Colors.red);
                       },
                     ),
                     const Divider(height: 30),
-                    _buildStatRow('DAYS TO TET', '6 Days', Colors.amber[700]!),
+                    _buildStatRow('NGÀY CÒN LẠI ĐẾN TẾT', '6 Days', Colors.amber[700]!),
                   ],
                 ),
               )

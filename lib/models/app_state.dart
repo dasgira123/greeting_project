@@ -59,15 +59,15 @@ class AppState extends ChangeNotifier {
   }
 
   // MỚI: Hàm hỗ trợ AI lấy câu chúc phù hợp với từng nhóm
+  // Hàm hỗ trợ AI lấy câu chúc phù hợp với từng nhóm (Đã sửa lại khớp tiếng Việt)
   List<Template> getSuggestionsForCategory(String contactCategory) {
     if (contactCategory == 'Gia đình') {
-      return templates.where((t) => t.category == 'Heartfelt').toList();
+      return templates.where((t) => t.category == 'Chân thành').toList();
     } else if (contactCategory == 'Đồng nghiệp') {
-      return templates.where((t) => t.category == 'Formal').toList();
+      return templates.where((t) => t.category == 'Lịch sự').toList();
     } else if (contactCategory == 'Bạn bè') {
-      return templates.where((t) => t.category == 'Funny').toList();
+      return templates.where((t) => t.category == 'Hài hước').toList();
     }
-    // Mặc định trả về tất cả nếu không khớp
     return templates;
   }
 }

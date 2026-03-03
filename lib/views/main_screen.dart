@@ -29,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
           children: const [
             Icon(Icons.calendar_today, color: Colors.amber),
             SizedBox(width: 8),
-            Text('Tết Greeting', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+            Text('Chúc Tết', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
           ],
         ),
         actions: [
