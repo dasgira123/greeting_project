@@ -1,26 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../domain/entities/contact.dart';
+import '../../domain/entities/template.dart';
 
-class Contact {
-  final String id;
-  final String name;
-  String category; // Bỏ chữ 'final' để có thể cập nhật phân loại
-  String status;
-
-  Contact({required this.id, required this.name, required this.category, required this.status});
-}
-
-class Template {
-  final String id;
-  final String text;
-  final String category; // Ví dụ: 'Formal' (Trang trọng), 'Funny' (Hài hước), 'Heartfelt' (Chân thành)
-
-  Template({required this.id, required this.text, required this.category});
-}
-
-// Lớp quản lý dữ liệu toàn cục
-class AppState extends ChangeNotifier {
+class HomeViewModel extends ChangeNotifier {
+  // Dữ liệu giả lập
   List<Contact> contacts = [
-    // Đã cập nhật category mẫu sang tiếng Việt để khớp với UI
     Contact(id: '1', name: 'Ông Bà Nội', category: 'Gia đình', status: 'Called'),
     Contact(id: '2', name: 'Ba Mẹ', category: 'Gia đình', status: 'Called'),
     Contact(id: '3', name: 'Sếp Nguyễn', category: 'Đồng nghiệp', status: 'Messaged'),
@@ -45,21 +29,20 @@ class AppState extends ChangeNotifier {
     final index = contacts.indexWhere((c) => c.id == id);
     if (index != -1) {
       contacts[index].status = newStatus;
-      notifyListeners(); // Báo cho các màn hình khác cập nhật UI
+      notifyListeners();
     }
   }
 
-  // MỚI: Hàm cập nhật thẻ phân loại (Gia đình, Đồng nghiệp, Bạn bè)
+  // Hàm cập nhật thẻ phân loại
   void updateContactCategory(String id, String newCategory) {
     final index = contacts.indexWhere((c) => c.id == id);
     if (index != -1) {
       contacts[index].category = newCategory;
-      notifyListeners(); // Cập nhật lại UI ở mọi nơi dùng AppState
+      notifyListeners();
     }
   }
 
-  // MỚI: Hàm hỗ trợ AI lấy câu chúc phù hợp với từng nhóm
-  // Hàm hỗ trợ AI lấy câu chúc phù hợp với từng nhóm (Đã sửa lại khớp tiếng Việt)
+  // Hàm hỗ trợ lấy câu chúc
   List<Template> getSuggestionsForCategory(String contactCategory) {
     if (contactCategory == 'Gia đình') {
       return templates.where((t) => t.category == 'Chân thành').toList();
@@ -70,7 +53,16 @@ class AppState extends ChangeNotifier {
     }
     return templates;
   }
-}
 
-// Khởi tạo biến toàn cục để các màn hình đều truy cập được
-final appState = AppState();
+  // THÊM MỚI: Hàm gom nhóm dữ liệu danh bạ theo Category
+  Map<String, List<Contact>> get groupedContacts {
+    Map<String, List<Contact>> groupedData = {};
+    for (var contact in contacts) {
+      if (!groupedData.containsKey(contact.category)) {
+        groupedData[contact.category] = [];
+      }
+      groupedData[contact.category]!.add(contact);
+    }
+    return groupedData;
+  }
+}

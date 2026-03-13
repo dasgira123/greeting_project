@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:greeting_project/models/app_state.dart';
+import 'package:provider/provider.dart'; // Thêm thư viện Provider
+import '../../viewmodels/home/home_viewmodel.dart'; // Import ViewModel
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -25,7 +26,6 @@ class ProfileScreen extends StatelessWidget {
               const Text('Chúc mừng năm mới 2026!', style: TextStyle(color: Colors.grey)),
               const SizedBox(height: 40),
 
-              // Bảng thống kê
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -35,15 +35,14 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    // Lắng nghe sự thay đổi của appState
-                    ListenableBuilder(
-                      listenable: appState,
-                      builder: (context, child) {
-                        return _buildStatRow('TIẾN ĐỘ LỜI CHÚC', '${appState.greetedContacts}/${appState.totalContacts}', Colors.red);
+                    // THAY ĐỔI: Sử dụng Consumer thay cho ListenableBuilder
+                    Consumer<HomeViewModel>(
+                      builder: (context, viewModel, child) {
+                        return _buildStatRow('TIẾN ĐỘ LỜI CHÚC', '${viewModel.greetedContacts}/${viewModel.totalContacts}', Colors.red);
                       },
                     ),
                     const Divider(height: 30),
-                    _buildStatRow('NGÀY CÒN LẠI ĐẾN TẾT', '6 Days', Colors.amber[700]!),
+                    _buildStatRow('TẾT CÒN', '6 NGÀY', Colors.amber[700]!),
                   ],
                 ),
               )

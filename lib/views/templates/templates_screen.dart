@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:greeting_project/models/app_state.dart';
+import 'package:provider/provider.dart';
+import '../../domain/entities/template.dart';
+import '../../viewmodels/home/home_viewmodel.dart';
 
 class TemplatesScreen extends StatefulWidget {
   const TemplatesScreen({super.key});
@@ -14,9 +16,12 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // THAY ĐỔI: Lấy dữ liệu ViewModel qua Provider
+    final viewModel = context.watch<HomeViewModel>();
+
     List<Template> filteredTemplates = selectedFilter == 'Tất cả'
-        ? appState.templates
-        : appState.templates.where((t) => t.category == selectedFilter).toList();
+        ? viewModel.templates
+        : viewModel.templates.where((t) => t.category == selectedFilter).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -30,7 +35,6 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
             const Text('Tìm ra lời chúc phù hợp cho người quan trọng của bạn.', style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 20),
 
-            // Bộ lọc (Filter Chips)
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -53,7 +57,6 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Danh sách mẫu lời chúc
             Expanded(
               child: ListView.builder(
                 itemCount: filteredTemplates.length,
