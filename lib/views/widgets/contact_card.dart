@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/contact.dart';
 import '../contact/contact_detail_screen.dart';
+import '../../utils/category_helper.dart';
 
 class ContactCard extends StatelessWidget {
   final Contact contact;
@@ -36,9 +37,15 @@ class ContactCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9F9FB), // Nền xám rất nhẹ, nhìn sang hơn Card trắng
+        color: Colors.white, // Nền trắng tính tế
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.withOpacity(0.15)), // Viền xám mờ
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04), // Bóng thả cực nhẹ
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -49,9 +56,8 @@ class ContactCard extends StatelessWidget {
           );
         },
         leading: CircleAvatar(
-          backgroundColor: Colors.orange[50],
-          // Thay đổi icon để giống ảnh mẫu hơn
-          child: const Icon(Icons.person, color: Colors.orange),
+          backgroundColor: CategoryHelper.getColor(contact.category).withOpacity(0.15),
+          child: Icon(CategoryHelper.getIcon(contact.category), color: CategoryHelper.getColor(contact.category)),
         ),
         title: Text(contact.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87)),
         subtitle: Align(

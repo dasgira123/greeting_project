@@ -21,7 +21,9 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
 
     List<Template> filteredTemplates = selectedFilter == 'Tất cả'
         ? viewModel.templates
-        : viewModel.templates.where((t) => t.category == selectedFilter).toList();
+        : (selectedFilter == 'Khác' 
+            ? viewModel.templates.where((t) => !['Trang trọng', 'Hài hước', 'Chân thành'].contains(t.category)).toList()
+            : viewModel.templates.where((t) => t.category == selectedFilter).toList());
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -38,15 +40,22 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: ['Tất cả', 'Lịch sự', 'Hài hước', 'Chân thành'].map((filter) {
+                children: [
+                  'Tất cả', 
+                  'Trang trọng', 
+                  'Hài hước', 
+                  'Chân thành', 
+                  'Khác' // Để hứng những template người dùng tự lưu với category dị
+                ].map((filter) {
                   bool isSelected = selectedFilter == filter;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: ChoiceChip(
-                      label: Text(filter, style: TextStyle(color: isSelected ? Colors.white : Colors.black87)),
+                      label: Text(filter, style: TextStyle(color: isSelected ? Colors.white : Colors.black87, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
                       selected: isSelected,
                       selectedColor: const Color(0xFFD32F2F),
                       backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: isSelected ? Colors.transparent : Colors.grey.shade300)),
                       onSelected: (selected) {
                         setState(() => selectedFilter = filter);
                       },
@@ -55,7 +64,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
                 }).toList(),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             Expanded(
               child: ListView.builder(
@@ -78,21 +87,55 @@ class _TemplatesScreenState extends State<TemplatesScreen> {
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(20)),
-                              child: Text(template.category.toUpperCase(), style: TextStyle(fontSize: 10, color: Colors.blue[700], fontWeight: FontWeight.bold)),
+                              decoration: BoxDecoration(color: template.isSystem ? Colors.blue[50] : Colors.orange.shade50, borderRadius: BorderRadius.circular(20)),
+                              child: Text(
+                                template.category.toUpperCase(), 
+                                style: TextStyle(
+                                  fontSize: 10, 
+                                  color: template.isSystem ? Colors.blue[700] : Colors.orange.shade800, 
+                                  fontWeight: FontWeight.bold
+                                )
+                              ),
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.copy, color: Colors.grey),
-                              onPressed: () {
-                                Clipboard.setData(ClipboardData(text: template.text)).then((_) {
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied to clipboard!')));
-                                });
-                              },
+                            Row(
+                              children: [
+                                if (!template.isSystem)
+                                  const Padding(
+                                    padding: EdgeInsets.only(right: 8.0),
+                                    child: Icon(Icons.auto_awesome, color: Colors.orange, size: 16),
+                                  ),
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  icon: const Icon(Icons.copy, color: Colors.grey, size: 20),
+                                  onPressed: () {
+                                    Clipboard.setData(ClipboardData(text: template.text)).then((_) {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                        content: Text('Đã copy lời chúc từ bộ sưu tập!'),
+                                        backgroundColor: Colors.green,
+                                        duration: Duration(seconds: 1),
+                                      ));
+                                    });
+                                  },
+                                ),
+                              ],
                             )
                           ],
                         ),
                         const SizedBox(height: 12),
-                        Text('"${template.text}"', style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.black87, height: 1.5)),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('"', style: TextStyle(fontSize: 24, height: 0.8, color: Colors.red.withOpacity(0.5), fontWeight: FontWeight.bold)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                template.text, 
+                                style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.black87, height: 1.5, fontSize: 15)
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   );

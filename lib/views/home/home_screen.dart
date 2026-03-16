@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:greeting_project/viewmodels/home/home_viewmodel.dart';
 import 'package:greeting_project/views/widgets/contact_card.dart';
 import 'package:greeting_project/views/widgets/progress_card.dart';
+import 'package:greeting_project/utils/category_helper.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,12 +13,6 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       // Thay đổi 1: Màu nền trắng tinh tế hơn thay vì xám
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Danh Bạ Chúc Tết', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0, // Tránh lỗi đổi màu khi cuộn trên Material 3
-      ),
       body: Consumer<HomeViewModel>(
         builder: (context, viewModel, child) {
           int total = viewModel.totalContacts;
@@ -28,14 +23,24 @@ class HomeScreen extends StatelessWidget {
           final categories = groupedData.keys.toList();
 
           return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Chỉnh padding gọn hơn
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24), // Chỉnh padding gọn hơn
             children: [
+              const Text(
+                'Danh Bạ Chúc Tết',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 16),
               ProgressCard(greeted: greeted, total: total, progress: progress),
 
               const SizedBox(height: 24),
 
               // TextField thiết kế bo tròn với viền đỏ mờ (Giống ảnh mẫu)
               TextField(
+                onChanged: (value) => viewModel.searchContacts(value),
                 decoration: InputDecoration(
                   hintText: 'Tìm kiếm trong danh bạ...',
                   hintStyle: const TextStyle(color: Colors.grey),
@@ -74,10 +79,10 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             category,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 16, // Chỉnh size chữ phù hợp hơn
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFFD32F2F) // Thay đổi 2: Dùng mã màu đỏ chuẩn (giống Header)
+                                color: CategoryHelper.getColor(category) // Màu linh hoạt
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -98,6 +103,14 @@ class HomeScreen extends StatelessWidget {
             ],
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          context.read<HomeViewModel>().importFromDevice(context);
+        },
+        backgroundColor: const Color(0xFFD32F2F),
+        icon: const Icon(Icons.person_add, color: Colors.white),
+        label: const Text('Từ danh bạ', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
   }

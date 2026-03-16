@@ -17,12 +17,20 @@ class ProgressCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFFD32F2F), // Đỏ đậm
+            const Color(0xFFFF5722), // Cam sáng
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
+            color: const Color(0xFFD32F2F).withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           )
         ],
       ),
@@ -32,32 +40,43 @@ class ProgressCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Năm Mới Sum Vầy!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const Text(
+                'Năm Mới Sum Vầy!',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.red[50],
+                  color: Colors.white.withOpacity(0.2), // Màu bán trong suốt
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white.withOpacity(0.3)),
                 ),
                 child: Text(
                   '$greeted/$total greeted',
-                  style: TextStyle(color: Colors.red[700], fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               )
             ],
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Gửi đi lời chúc, nhận lại niềm vui. Hãy lan tỏa yêu thương trong dịp Tết này!',
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: Colors.white.withOpacity(0.9)),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: Colors.grey[200],
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.amber),
+              backgroundColor: Colors.white.withOpacity(0.3),
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.amberAccent),
               minHeight: 8,
             ),
           ),
