@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../domain/entities/contact.dart';
+import '../../viewmodels/home/contact_viewmodel.dart';
 import '../contact/contact_detail_screen.dart';
 import '../../utils/category_helper.dart';
 
@@ -67,7 +69,35 @@ class ContactCard extends StatelessWidget {
             child: _buildStatusBadge(contact.status),
           ),
         ),
-        trailing: const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Xóa liên hệ?'),
+                    content: Text('Bạn có chắc chắn muốn xóa "${contact.name}" không?'),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(context), child: const Text('Hủy')),
+                      TextButton(
+                        onPressed: () {
+                          context.read<ContactViewModel>().deleteContact(contact.id);
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã xóa liên hệ')));
+                        }, 
+                        child: const Text('Xóa', style: TextStyle(color: Colors.red))
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
+          ],
+        ),
       ),
     );
   }

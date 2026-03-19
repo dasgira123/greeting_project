@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:greeting_project/viewmodels/home/home_viewmodel.dart';
+import 'package:greeting_project/viewmodels/home/contact_viewmodel.dart';
 import 'package:greeting_project/views/widgets/contact_card.dart';
 import 'package:greeting_project/views/widgets/progress_card.dart';
 import 'package:greeting_project/utils/category_helper.dart';
@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       // Thay đổi 1: Màu nền trắng tinh tế hơn thay vì xám
       backgroundColor: Colors.white,
-      body: Consumer<HomeViewModel>(
+      body: Consumer<ContactViewModel>(
         builder: (context, viewModel, child) {
           int total = viewModel.totalContacts;
           int greeted = viewModel.greetedContacts;
@@ -106,7 +106,7 @@ class HomeScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          context.read<HomeViewModel>().importFromDevice(context);
+          context.read<ContactViewModel>().importFromDevice(context);
         },
         backgroundColor: const Color(0xFFD32F2F),
         icon: const Icon(Icons.person_add, color: Colors.white),

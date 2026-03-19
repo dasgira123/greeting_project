@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart'; // Thêm provider
 import '../../domain/entities/contact.dart'; // Import entity
-import '../../viewmodels/home/home_viewmodel.dart'; // Import ViewModel
+import '../../viewmodels/home/contact_viewmodel.dart';
+import '../../viewmodels/home/category_viewmodel.dart';
+import '../../viewmodels/home/greeting_viewmodel.dart';
 import '../../utils/category_helper.dart';
 
 class ContactDetailScreen extends StatefulWidget {
@@ -30,7 +32,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
       _aiSuggestions = [];
     });
 
-    final suggestions = await context.read<HomeViewModel>().generateAIGreetings(
+    final suggestions = await context.read<GreetingViewModel>().generateAIGreetings(
       widget.contact,
     );
 
@@ -44,7 +46,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
 
   void _markAsGreeted(BuildContext context, String newStatus) {
     // THAY ĐỔI: Dùng Provider gọi hàm thay vì appState
-    context.read<HomeViewModel>().updateContactStatus(widget.contact.id, newStatus);
+    context.read<ContactViewModel>().updateContactStatus(widget.contact.id, newStatus);
     setState(() {
       widget.contact.status = newStatus;
     });
@@ -68,7 +70,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
     String newStatus = (isChecked == true) ? 'Called' : 'Pending';
 
     // THAY ĐỔI: Dùng Provider gọi hàm
-    context.read<HomeViewModel>().updateContactStatus(widget.contact.id, newStatus);
+    context.read<ContactViewModel>().updateContactStatus(widget.contact.id, newStatus);
     setState(() {
       widget.contact.status = newStatus;
     });
@@ -118,8 +120,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                 final newCategory = categoryController.text.trim();
                 if (newCategory.isNotEmpty) {
                   setState(() { _currentCategory = newCategory; });
-                  context.read<HomeViewModel>().updateContactCategory(widget.contact.id, newCategory);
-                  context.read<HomeViewModel>().addCategory(newCategory);
+                  context.read<ContactViewModel>().updateContactCategory(widget.contact.id, newCategory);
+                  context.read<CategoryViewModel>().addCategory(newCategory);
                 }
                 Navigator.pop(context);
               },
@@ -134,7 +136,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
 
   void _showCategoryPicker() {
     // Lấy các category hiện có trong db (từ HomeViewModel)
-    final List<String> categories = context.read<HomeViewModel>().categories.map((c) => c.name).toList();
+    final List<String> categories = context.read<CategoryViewModel>().categories.map((c) => c.name).toList();
 
     showModalBottomSheet(
       context: context,
@@ -163,10 +165,49 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                         return ListTile(
                           leading: Icon(CategoryHelper.getIcon(category), color: CategoryHelper.getColor(category)),
                           title: Text(category),
-                          trailing: isSelected ? const Icon(Icons.check, color: Colors.green) : null,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isSelected) const Icon(Icons.check, color: Colors.green),
+                              if (!CategoryHelper.isDefaultCategory(category)) ...[
+                                if (isSelected) const SizedBox(width: 8),
+                                IconButton(
+                                  icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Xóa phân loại'),
+                                        content: Text('Bạn có chắc chắn muốn xóa phân loại "$category" không? Các liên hệ trong nhóm này sẽ được chuyển về "Chưa phân loại".'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context),
+                                            child: const Text('Hủy'),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              context.read<CategoryViewModel>().deleteCategoryByName(category);
+                                              if (isSelected) {
+                                                setState(() { _currentCategory = 'Chưa phân loại'; });
+                                                context.read<ContactViewModel>().updateContactCategory(widget.contact.id, 'Chưa phân loại');
+                                              }
+                                              Navigator.pop(context); // Close dialog
+                                              Navigator.pop(context); // Close bottom sheet
+                                            },
+                                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD32F2F)),
+                                            child: const Text('Xóa', style: TextStyle(color: Colors.white)),
+                                          ),
+                                        ],
+                                      )
+                                    );
+                                  },
+                                ),
+                              ],
+                            ],
+                          ),
                           onTap: () {
                             setState(() { _currentCategory = category; });
-                            context.read<HomeViewModel>().updateContactCategory(widget.contact.id, category);
+                            context.read<ContactViewModel>().updateContactCategory(widget.contact.id, category);
                             Navigator.pop(context);
                           },
                         );
@@ -196,7 +237,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   Widget build(BuildContext context) {
     bool isGreeted = widget.contact.status != 'Pending';
     // Lấy những system templates có cùng category
-    final suggestions = context.read<HomeViewModel>().templates.where((t) => t.category == _currentCategory && t.isSystem).toList();
+    final suggestions = context.read<GreetingViewModel>().templates.where((t) => t.category == _currentCategory && t.isSystem).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -210,7 +251,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
               background: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFFE53935), Color(0xFFB71C1C)],
+                    colors: [Color(0xFFB71C1C), Color(0xFFD32F2F), Color(0xFFE65100)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -223,19 +264,19 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white.withOpacity(0.5), width: 2),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          )
-                        ]
+                        border: Border.all(color: const Color(0xFFFDD835).withOpacity(0.8), width: 2.5),
                       ),
-                      child: CircleAvatar(
-                        radius: 45,
-                        backgroundColor: Colors.white.withOpacity(0.2),
-                        child: const Icon(Icons.person, size: 45, color: Colors.white),
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
+                        ),
+                        child: CircleAvatar(
+                          radius: 45,
+                          backgroundColor: Colors.white.withOpacity(0.2),
+                          child: const Icon(Icons.person, size: 45, color: Colors.white),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -254,18 +295,26 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                         margin: const EdgeInsets.only(top: 12),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: CategoryHelper.getColor(_currentCategory).withOpacity(0.8),
+                          color: const Color(0xFFFDD835).withOpacity(0.2),
                           borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.white.withOpacity(0.5)),
+                          border: Border.all(color: const Color(0xFFFDD835).withOpacity(0.5), width: 1.5),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(CategoryHelper.getIcon(_currentCategory), size: 16, color: Colors.white),
+                            Icon(CategoryHelper.getIcon(_currentCategory), size: 16, color: const Color(0xFFFDD835)),
                             const SizedBox(width: 8),
-                            Text(_currentCategory, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+                            Text(
+                              _currentCategory, 
+                              style: const TextStyle(
+                                color: Color(0xFFFDD835), 
+                                fontSize: 13, 
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.5,
+                              )
+                            ),
                             const SizedBox(width: 8),
-                            const Icon(Icons.edit, size: 14, color: Colors.white70),
+                            const Icon(Icons.edit, size: 14, color: Color(0xFFFDD835)),
                           ],
                         ),
                       ),
@@ -490,7 +539,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                 Clipboard.setData(ClipboardData(text: text)).then((_) {
                   if (isAI) {
                      // Lưu vào CSDL Template mới, thay vì lưu vào liên hệ, chúng ta lưu bằng category là style của câu chúc
-                     context.read<HomeViewModel>().saveAIGreeting(text, style);
+                     context.read<GreetingViewModel>().saveAIGreeting(text, style);
                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã sao chép và lưu vào Thư viện lời chúc!')));
                   } else {
                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã sao chép!')));

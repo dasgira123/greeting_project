@@ -32,15 +32,7 @@ class _MainScreenState extends State<MainScreen> {
             Text('Chúc Tết', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
           ],
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundColor: Colors.white.withOpacity(0.3),
-              child: const Text('NV', style: TextStyle(color: Colors.white)),
-            ),
-          )
-        ],
+        actions: const [],
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: Container(

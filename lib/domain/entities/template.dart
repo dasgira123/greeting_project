@@ -1,9 +1,10 @@
 class Template {
   final String id;
-  final String text;
-  final String category;
+  String text;
+  String category;
   final bool isSystem;
-  final int usageCount;
+  int usageCount;
+  bool isFavorite;
 
   Template({
     required this.id,
@@ -11,5 +12,6 @@ class Template {
     required this.category,
     this.isSystem = false,
     this.usageCount = 0,
+    this.isFavorite = false,
   });
 }
