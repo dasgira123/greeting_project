@@ -16,12 +16,13 @@ class AIService {
   );
 
   /// Gọi Gemini API sinh ra 3 câu chúc với 3 phong cách khác biệt.
-  Future<List<Map<String, String>>> generateGreetings(Contact contact, {String extraNote = ''}) async {
+  Future<List<Map<String, String>>> generateGreetings(Contact contact, {String extraNote = '', int? senderBirthYear}) async {
     final prompt = '''
 Bạn là chuyên gia viết lời chúc Tết Nguyên Đán Việt Nam.
 Hãy viết chính xác 3 câu chúc Tết dành cho:
 - Tên người nhận: ${contact.name}
 - Mối quan hệ: ${contact.category}
+${senderBirthYear != null ? "- THÔNG TIN NGƯỜI GỬI: Sinh năm $senderBirthYear. Bạn HÃY TỰ ĐỘNG CÂN NHẮC VÀ ĐIỀU CHỈNH CÁCH XƯNG HÔ, NGÔN TỪ sao cho PHÙ HỢP TUYỆT ĐỐI VỚI ĐỘ TUỔI THẾ HỆ CỦA NGƯỜI GỬI (Ví dụ: Gen Z dùng từ trending hài hước, thế hệ trưởng thành dùng từ đĩnh đạc, sâu sắc)." : ""}
 ${extraNote.isNotEmpty ? "- Chú ý thêm: $extraNote" : ""}
 
 Yêu cầu:

@@ -5,6 +5,7 @@ class TemplateDto {
   final int isSystem;
   final int usageCount;
   final int isFavorite;
+  final String? userId;
 
   TemplateDto({
     required this.id,
@@ -13,6 +14,7 @@ class TemplateDto {
     this.isSystem = 0,
     this.usageCount = 0,
     this.isFavorite = 0,
+    this.userId,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class TemplateDto {
       'is_system': isSystem,
       'usage_count': usageCount,
       'is_favorite': isFavorite,
+      'user_id': userId,
     };
   }
 
@@ -34,6 +37,7 @@ class TemplateDto {
       isSystem: map['is_system'] as int,
       usageCount: map['usage_count'] as int,
       isFavorite: (map['is_favorite'] ?? 0) as int,
+      userId: map['user_id'] as String?,
     );
   }
 }

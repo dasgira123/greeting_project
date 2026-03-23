@@ -1,6 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../viewmodels/home/contact_viewmodel.dart';
+import '../../viewmodels/auth/auth_viewmodel.dart';
+import '../auth/login_screen.dart';
+import 'edit_profile_screen.dart';
+import 'change_password_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -47,13 +54,15 @@ class ProfileScreen extends StatelessWidget {
                 ? Colors.orange
                 : const Color(0xFFE67E22);
 
+    final auth = context.watch<AuthViewModel>();
+    final user = auth.currentUser;
+
     return Scaffold(
-      // Nền kem vàng chủ đề Tết — tách biệt rõ với header đỏ
-      backgroundColor: const Color(0xFFFFF5E4),
+      backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // ── Hero header banner ────────────────────────────────
+            // ── Hero header banner
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(0, 48, 0, 40),
@@ -70,12 +79,14 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  // Vòng trang trí vàng bên ngoài avatar
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(color: const Color(0xFFFDD835), width: 2.5),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
+                      ]
                     ),
                     child: Container(
                       width: 84,
@@ -85,49 +96,42 @@ class ProfileScreen extends StatelessWidget {
                         color: Colors.white.withOpacity(0.15),
                         border: Border.all(color: Colors.white.withOpacity(0.4), width: 1.5),
                       ),
-                      child: Icon(Icons.person_outline, size: 46, color: Colors.white.withOpacity(0.85)),
+                      child: user?.avatarPath != null && File(user!.avatarPath!).existsSync()
+                        ? ClipOval(
+                            child: Image.file(
+                              File(user!.avatarPath!), 
+                              width: 84, 
+                              height: 84, 
+                              fit: BoxFit.cover,
+                              errorBuilder: (ctx, err, stack) => Icon(Icons.error_outline, size: 36, color: Colors.white.withOpacity(0.85))
+                            )
+                          )
+                        : Icon(Icons.person, size: 46, color: Colors.white.withOpacity(0.85)),
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Khách',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  Text(
+                    user?.fullName ?? 'Khách',
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
-                  const SizedBox(height: 10),
-                  // Login button với viền vàng
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Chức năng đăng nhập sẽ được thêm sau!')),
-                      );
-                    },
-                    icon: const Icon(Icons.login, size: 15, color: Color(0xFFFDD835)),
-                    label: const Text(
-                      'Đăng nhập',
-                      style: TextStyle(
-                        color: Color(0xFFFDD835),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
+                  if (user != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      user.phone,
+                      style: const TextStyle(fontSize: 14, color: Colors.white70),
                     ),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFFFDD835), width: 1.5),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-                    ),
-                  ),
+                  ]
                 ],
               ),
             ),
 
             const SizedBox(height: 20),
 
-            // ── Stats cards ───────────────────────────────────────
+            // ── Stats cards
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  // Progress card
                   Consumer<ContactViewModel>(
                     builder: (context, vm, _) {
                       final total = vm.totalContacts;
@@ -167,7 +171,6 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  // Countdown card
                   _statsCard(
                     icon: Icons.celebration_outlined,
                     iconColor: countdownColor,
@@ -177,11 +180,53 @@ class ProfileScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 24),
+
+                  // ── Actions cards
+                  if (user != null) ...[
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                         child: Text('Quản lý tài khoản', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                      )
+                    ),
+                     _actionCard(context, Icons.edit, 'Chỉnh sửa hồ sơ', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileScreen()))),
+                     const SizedBox(height: 8),
+                     _actionCard(context, Icons.lock_outline, 'Đổi mật khẩu', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChangePasswordScreen()))),
+                     const SizedBox(height: 8),
+                     _actionCard(context, Icons.logout, 'Đăng xuất', () => auth.logout(), isDestructive: true),
+                     const SizedBox(height: 40),
+                  ] else ...[
+                     _actionCard(context, Icons.login, 'Đăng nhập', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen()))),
+                     const SizedBox(height: 40),
+                  ]
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _actionCard(BuildContext context, IconData icon, String title, VoidCallback onTap, {bool isDestructive = false}) {
+    return Card(
+      elevation: 0,
+      color: Colors.white.withOpacity(0.95),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: ListTile(
+        onTap: onTap,
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+             color: isDestructive ? Colors.red.withOpacity(0.1) : const Color(0xFFD32F2F).withOpacity(0.1),
+             shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: isDestructive ? Colors.red : const Color(0xFFD32F2F), size: 18),
+        ),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.w600, color: isDestructive ? Colors.red : Colors.black87, fontSize: 15)),
+        trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       ),
     );
   }

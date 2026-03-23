@@ -21,7 +21,7 @@ class AppDatabase {
 
     return await openDatabase(
       path,
-      version: 4, // Tăng version lên 4 để thêm is_favorite
+      version: 7, // Tăng version lên 7 để thêm dob và avatar
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -44,6 +44,30 @@ class AppDatabase {
     if (oldVersion < 4) {
       await db.execute('ALTER TABLE templates ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0');
     }
+    if (oldVersion < 5) {
+      await db.execute('''
+      CREATE TABLE users (
+        id TEXT PRIMARY KEY,
+        phone TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        full_name TEXT NOT NULL
+      )
+      ''');
+    }
+    if (oldVersion < 6) {
+      await db.execute('ALTER TABLE templates ADD COLUMN user_id TEXT');
+      await db.execute('''
+      CREATE TABLE user_favorites (
+        user_id TEXT NOT NULL,
+        template_id TEXT NOT NULL,
+        PRIMARY KEY (user_id, template_id)
+      )
+      ''');
+    }
+    if (oldVersion < 7) {
+      await db.execute('ALTER TABLE users ADD COLUMN dob TEXT');
+      await db.execute('ALTER TABLE users ADD COLUMN avatar_path TEXT');
+    }
   }
 
   Future<void> _createDB(Database db, int version) async {
@@ -52,6 +76,17 @@ class AppDatabase {
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL UNIQUE,
       is_default INTEGER NOT NULL DEFAULT 0
+    )
+    ''');
+    
+    await db.execute('''
+    CREATE TABLE users (
+      id TEXT PRIMARY KEY,
+      phone TEXT NOT NULL UNIQUE,
+      password TEXT NOT NULL,
+      full_name TEXT NOT NULL,
+      dob TEXT,
+      avatar_path TEXT
     )
     ''');
 
@@ -74,7 +109,16 @@ class AppDatabase {
       category TEXT NOT NULL,
       is_system INTEGER NOT NULL DEFAULT 0,
       usage_count INTEGER NOT NULL DEFAULT 0,
-      is_favorite INTEGER NOT NULL DEFAULT 0
+      is_favorite INTEGER NOT NULL DEFAULT 0,
+      user_id TEXT
+    )
+    ''');
+
+    await db.execute('''
+    CREATE TABLE user_favorites (
+      user_id TEXT NOT NULL,
+      template_id TEXT NOT NULL,
+      PRIMARY KEY (user_id, template_id)
     )
     ''');
 

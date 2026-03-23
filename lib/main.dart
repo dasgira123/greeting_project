@@ -30,8 +30,6 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
 
-      // QUAN TRỌNG NHẤT Ở ĐÂY:
-      // Sửa HomeScreen() thành MainScreen()
       home: const MainScreen(),
     );
   }

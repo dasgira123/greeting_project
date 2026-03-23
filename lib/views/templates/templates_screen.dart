@@ -242,7 +242,7 @@ class _TemplatesScreenState extends State<TemplatesScreen> with SingleTickerProv
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Colors.transparent,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -256,14 +256,14 @@ class _TemplatesScreenState extends State<TemplatesScreen> with SingleTickerProv
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 2),
                 const Text('Tìm ra lời chúc phù hợp cho người quan trọng của bạn.',
-                    style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    style: TextStyle(color: Colors.black87, fontSize: 12, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 10),
 
                 // Tabs
                 TabBar(
                   controller: _tabController,
                   labelColor: const Color(0xFFD32F2F),
-                  unselectedLabelColor: Colors.grey,
+                  unselectedLabelColor: Colors.black54,
                   indicatorColor: const Color(0xFFD32F2F),
                   labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                   tabs: const [

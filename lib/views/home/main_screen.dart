@@ -22,6 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFFD32F2F),
         elevation: 0,
@@ -29,12 +30,26 @@ class _MainScreenState extends State<MainScreen> {
           children: const [
             Icon(Icons.calendar_today, color: Colors.amber),
             SizedBox(width: 8),
-            Text('Chúc Tết', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+            Text(
+              'Chúc Tết',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
         actions: const [],
       ),
-      body: _screens[_selectedIndex],
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg_tet.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: _screens[_selectedIndex],
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -52,9 +67,21 @@ class _MainScreenState extends State<MainScreen> {
           elevation: 0, // Bỏ elevation mặc định để dùng shadow tuỳ chỉnh
           onTap: (index) => setState(() => _selectedIndex = index),
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'HOME'),
-            BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), activeIcon: Icon(Icons.chat_bubble), label: 'TEMPLATES'),
-            BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'PROFILE'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home),
+              label: 'HOME',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat_bubble_outline),
+              activeIcon: Icon(Icons.chat_bubble),
+              label: 'TEMPLATES',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              activeIcon: Icon(Icons.person),
+              label: 'PROFILE',
+            ),
           ],
         ),
       ),

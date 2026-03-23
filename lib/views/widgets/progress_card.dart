@@ -19,8 +19,8 @@ class ProgressCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFFD32F2F), // Đỏ đậm
-            const Color(0xFFFF5722), // Cam sáng
+            const Color(0xFFD32F2F).withOpacity(0.85), // Đỏ đậm trong suốt
+            const Color(0xFFFF5722).withOpacity(0.85), // Cam sáng trong suốt
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

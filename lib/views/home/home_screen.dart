@@ -11,8 +11,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Thay đổi 1: Màu nền trắng tinh tế hơn thay vì xám
-      backgroundColor: Colors.white,
+      // Thay đổi nền thành trong suốt để nhìn thấy ảnh hoa đào phía dưới
+      backgroundColor: Colors.transparent,
       body: Consumer<ContactViewModel>(
         builder: (context, viewModel, child) {
           int total = viewModel.totalContacts;
@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
                   hintStyle: const TextStyle(color: Colors.grey),
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
                   filled: true,
-                  fillColor: Colors.grey[50], // Nền hơi xám nhẹ
+                  fillColor: Colors.white.withOpacity(0.6), // Nền hơi xám nhẹ -> Nền trong suốt
                   contentPadding: const EdgeInsets.symmetric(vertical: 0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20), // Bo tròn sâu hơn

@@ -12,6 +12,7 @@ class TemplateMapper implements IMapper<TemplateDto, Template> {
       isSystem: dto.isSystem == 1,
       usageCount: dto.usageCount,
       isFavorite: dto.isFavorite == 1,
+      userId: dto.userId,
     );
   }
 
@@ -24,6 +25,7 @@ class TemplateMapper implements IMapper<TemplateDto, Template> {
       isSystem: entity.isSystem ? 1 : 0,
       usageCount: entity.usageCount,
       isFavorite: entity.isFavorite ? 1 : 0,
+      userId: entity.userId,
     );
   }
 }

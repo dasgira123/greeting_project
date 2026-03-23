@@ -39,7 +39,7 @@ class ContactCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white, // Nền trắng tính tế
+        color: Colors.white.withOpacity(0.8), // Nền trắng trong suốt để lộ hoa nền
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

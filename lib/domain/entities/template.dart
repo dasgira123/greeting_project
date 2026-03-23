@@ -5,6 +5,7 @@ class Template {
   final bool isSystem;
   int usageCount;
   bool isFavorite;
+  String? userId;
 
   Template({
     required this.id,
@@ -13,5 +14,6 @@ class Template {
     this.isSystem = false,
     this.usageCount = 0,
     this.isFavorite = false,
+    this.userId,
   });
 }
