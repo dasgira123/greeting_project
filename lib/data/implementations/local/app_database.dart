@@ -21,7 +21,7 @@ class AppDatabase {
 
     return await openDatabase(
       path,
-      version: 7, // Tăng version lên 7 để thêm dob và avatar
+      version: 8, // Tăng version lên 8 để cách ly contacts
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -42,7 +42,8 @@ class AppDatabase {
       await _seedDefaultTemplates(db);
     }
     if (oldVersion < 4) {
-      await db.execute('ALTER TABLE templates ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0');
+      await db.execute(
+          'ALTER TABLE templates ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0');
     }
     if (oldVersion < 5) {
       await db.execute('''
@@ -67,6 +68,9 @@ class AppDatabase {
     if (oldVersion < 7) {
       await db.execute('ALTER TABLE users ADD COLUMN dob TEXT');
       await db.execute('ALTER TABLE users ADD COLUMN avatar_path TEXT');
+      if (oldVersion < 8) {
+        await db.execute('ALTER TABLE contacts ADD COLUMN user_id TEXT');
+      }
     }
   }
 
