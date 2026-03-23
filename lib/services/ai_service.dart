@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../domain/entities/contact.dart';
 
 class AIService {
   // Thay thế bằng API Key thật của Google AI Studio (Gemini)
-  // TRONG MÔI TRƯỜNG THỰC TẾ: KHÔNG ĐƯỢC HARDCODE API KEY VÀO CLIENT.
-  // Ở ĐÂY CHÚNG TA HARDCODE ĐỂ DEMO/ĐỒ ÁN.
-  static const String _apiKey = 'AIzaSyDCMAz7YnW_W-rLTVHbggWDwuhVW5-nrfs';
+  static final String _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
 
   final GenerativeModel _model;
 

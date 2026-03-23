@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:greeting_project/views/home/main_screen.dart';
 import 'package:provider/provider.dart';
 import 'di.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 // THÊM DÒNG NÀY: Import file main_screen.dart của bạn vào
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  
   runApp(
     MultiProvider(
       providers: globalProviders,
