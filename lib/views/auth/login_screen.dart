@@ -64,6 +64,23 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           
           SafeArea(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                padding: const EdgeInsets.all(16),
+                icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainScreen()));
+                  }
+                },
+              ),
+            ),
+          ),
+          
+          SafeArea(
             child: Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
