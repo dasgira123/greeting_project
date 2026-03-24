@@ -12,7 +12,7 @@ import 'change_password_screen.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  static int _getDaysUntilTet() {
+  static ({int days, int year}) _getTetCountdown() {
     final lunarNewYears = [
       DateTime(2026, 2, 17),
       DateTime(2027, 2, 6),
@@ -21,31 +21,21 @@ class ProfileScreen extends StatelessWidget {
       DateTime(2030, 2, 3),
     ];
     final today = DateTime.now();
+    final todayTruncated = DateTime(today.year, today.month, today.day);
     for (final tet in lunarNewYears) {
-      final diff = tet.difference(DateTime(today.year, today.month, today.day)).inDays;
-      if (diff >= 0) return diff;
+      final diff = tet.difference(todayTruncated).inDays;
+      if (diff >= 0) {
+        return (days: diff, year: tet.year);
+      }
     }
-    return 0;
-  }
-
-  static int _nextTetYear() {
-    final lunarNewYears = [
-      DateTime(2026, 2, 17),
-      DateTime(2027, 2, 6),
-      DateTime(2028, 1, 26),
-      DateTime(2029, 2, 13),
-    ];
-    final now = DateTime.now();
-    for (final tet in lunarNewYears) {
-      if (now.isBefore(tet)) return tet.year;
-    }
-    return DateTime.now().year + 1;
+    return (days: 0, year: today.year + 1);
   }
 
   @override
   Widget build(BuildContext context) {
-    final days = _getDaysUntilTet();
-    final tetYear = _nextTetYear();
+    final countdown = _getTetCountdown();
+    final days = countdown.days;
+    final tetYear = countdown.year;
     final Color countdownColor = days == 0
         ? Colors.red
         : days <= 7
