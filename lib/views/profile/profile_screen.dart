@@ -114,13 +114,6 @@ class ProfileScreen extends StatelessWidget {
                     user?.fullName ?? 'Khách',
                     style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
-                  if (user != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      user.phone,
-                      style: const TextStyle(fontSize: 14, color: Colors.white70),
-                    ),
-                  ]
                 ],
               ),
             ),
