@@ -141,6 +141,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  Widget _buildDatePickerField(RegisterViewModel viewModel) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('NGÀY SINH', style: TextStyle(color: Colors.amber, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1)),
+        const SizedBox(height: 6),
+        InkWell(
+          onTap: () async {
+            final date = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now().subtract(const Duration(days: 365 * 20)),
+              firstDate: DateTime(1900),
+              lastDate: DateTime.now(),
+            );
+            if (date != null) {
+              viewModel.setDob("${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}");
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  viewModel.dob ?? 'DD/MM/YYYY',
+                  style: TextStyle(color: viewModel.dob != null ? Colors.white : Colors.white54, fontWeight: FontWeight.bold),
+                ),
+                const Icon(Icons.calendar_today, color: Colors.white54),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<RegisterViewModel>();
@@ -200,6 +241,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         const SizedBox(height: 32),
 
         _buildInputField('Họ và tên', _nameCtrl, suffixIcon: Icons.person),
+        _buildDatePickerField(viewModel),
         _buildInputField('Số điện thoại', _phoneCtrl, suffixIcon: Icons.phone),
         _buildInputField(
           'Mật khẩu', _passCtrl, 

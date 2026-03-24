@@ -10,6 +10,7 @@ class RegisterViewModel extends ChangeNotifier {
   String _phone = '';
   String _password = '';
   String _confirmPassword = '';
+  String? _dob;
   
   bool _isLoading = false;
   String? _errorMessage;
@@ -20,6 +21,7 @@ class RegisterViewModel extends ChangeNotifier {
   String get phone => _phone;
   String get password => _password;
   String get confirmPassword => _confirmPassword;
+  String? get dob => _dob;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get isPasswordVisible => _isPasswordVisible;
@@ -29,6 +31,7 @@ class RegisterViewModel extends ChangeNotifier {
   void setPhone(String val) { _phone = val; notifyListeners(); }
   void setPassword(String val) { _password = val; notifyListeners(); }
   void setConfirmPassword(String val) { _confirmPassword = val; notifyListeners(); }
+  void setDob(String? val) { _dob = val; notifyListeners(); }
 
   void togglePasswordVisibility() {
     _isPasswordVisible = !_isPasswordVisible;
@@ -41,7 +44,7 @@ class RegisterViewModel extends ChangeNotifier {
   }
 
   Future<bool> checkBeforeOtp() async {
-    if (_fullName.isEmpty || _phone.isEmpty || _password.isEmpty) {
+    if (_fullName.isEmpty || _phone.isEmpty || _password.isEmpty || _dob == null) {
       _errorMessage = 'Vui lòng nhập đầy đủ thông tin';
       notifyListeners();
       return false;
@@ -92,7 +95,7 @@ class RegisterViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final user = await _repository.register(fullName: _fullName, phone: _phone, password: _password);
+      final user = await _repository.register(fullName: _fullName, phone: _phone, password: _password, dob: _dob);
       if (user != null) {
         _isLoading = false;
         notifyListeners();

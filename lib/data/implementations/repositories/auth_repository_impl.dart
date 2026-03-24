@@ -22,12 +22,13 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User?> register({required String fullName, required String phone, required String password}) async {
+  Future<User?> register({required String fullName, required String phone, required String password, String? dob}) async {
     final userDto = UserDto(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       phone: phone,
       password: password,
       fullName: fullName,
+      dob: dob,
     );
     final response = await _api.register(userDto);
     if (response.success && response.user != null) {
